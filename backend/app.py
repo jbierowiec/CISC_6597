@@ -79,6 +79,7 @@ def serve_index():
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
+'''
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -94,6 +95,18 @@ def login():
         return jsonify({"redirect": "http://localhost:5000/admin"})
     else:
         return jsonify({"redirect": "http://localhost:5000/user"})
+'''
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    name = data.get("name")
+    role = data.get("role")
+
+    # Authentication logic here
+    redirect_url = "/admin" if role == "admin" and email == ADMIN_EMAIL else "/user"
+    return jsonify({"redirect": redirect_url})
 
 @app.route('/admin')
 def admin():
