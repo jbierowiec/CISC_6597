@@ -34,7 +34,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 #app = Flask(__name__)
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
 app.secret_key = 'AIzaSyBMW4Em5ro27yTIPw3K2GIAvAbcaSyqCWk'
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["https://cisc-6597.onrender.com"])
 
 ADMIN_EMAIL = "jbierowiec@fordham.edu"
 
