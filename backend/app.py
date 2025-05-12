@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, jsonify, session, url_for, send_file, json, Response, stream_with_context
+from flask import Flask, send_from_directory, request, render_template, redirect, jsonify, session, url_for, send_file, json, Response, stream_with_context
 from flask_cors import CORS
 from fpdf import FPDF
 import os, subprocess
@@ -31,7 +31,8 @@ from pdf_generators.basic_integration import generate_integral_worksheet
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_pdfs") 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-app = Flask(__name__)
+#app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='')
 app.secret_key = 'AIzaSyBMW4Em5ro27yTIPw3K2GIAvAbcaSyqCWk'
 CORS(app, supports_credentials=True)
 
@@ -69,8 +70,14 @@ def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, quest
 
 
 @app.route('/')
-def home():
-    return "Backend Running"
+#def home():
+#    return "Backend Running"
+def serve_index():
+    return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory(app.static_folder, path)
 
 @app.route('/login', methods=['POST'])
 def login():
