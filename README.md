@@ -1,4 +1,4 @@
-# CISC_6597 Computer Science Capstone Project
+# CISC 6597 Computer Science Capstone Project
 
 This repository contains the source code for the Computer Science Capstone Project. The application is built using React for the frontend and Flask/Django for the backend, with the website designed to be dynamic and responsive using HTML and CSS, ensuring compatibility with both personal computers and mobile devices. The database that stores all the sudoku games is a SQLite database.
 
