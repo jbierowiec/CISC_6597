@@ -68,7 +68,7 @@ def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, quest
 
 
 
-
+'''
 @app.route('/')
 #def home():
 #    return "Backend Running"
@@ -78,6 +78,7 @@ def serve_index():
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory(app.static_folder, path)
+'''
 
 '''
 @app.route('/login', methods=['POST'])
@@ -97,8 +98,12 @@ def login():
         return jsonify({"redirect": "http://localhost:5000/user"})
 '''
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["POST", "OPTIONS"])
 def login():
+    # Handle preflight (OPTIONS) request
+    if request.method == "OPTIONS":
+        return '', 204
+    
     data = request.get_json()
     email = data.get("email")
     name = data.get("name")
@@ -107,6 +112,15 @@ def login():
     # Authentication logic here
     redirect_url = "/admin" if role == "admin" and email == ADMIN_EMAIL else "/user"
     return jsonify({"redirect": redirect_url})
+
+# Serve React frontend
+@app.route("/")
+def index():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def static_files(path):
+    return send_from_directory(app.static_folder, path)
 
 @app.route('/admin')
 def admin():
