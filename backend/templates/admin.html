@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Analytics Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      .analytics-section {
+        padding: 80px 20px;
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .analytics-section h2 {
+        margin-bottom: 20px;
+      }
+
+      .analytics-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .analytics-table th,
+      .analytics-table td {
+        padding: 12px;
+        border: 1px solid #ccc;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .analytics-table th {
+        background-color: #333;
+        color: white;
+      }
+
+      .summary-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .summary-box {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+      }
+
+      .summary-box h4 {
+        margin: 10px 0;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .summary-box p {
+        font-size: 20px;
+        color: #1e88e5;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
+        <a href="/">Home</a>
+      </div>
+      <div class="nav-right">
+        <button class="user-button" onclick="window.location.href='/logout'">
+          Logout
+        </button>
+      </div>
+    </nav>
+
+    <section class="analytics-section">
+      <h2>📊 Worksheet Generation Analytics</h2>
+
+      <div class="summary-boxes" id="summary-boxes">
+        <!-- Filled by JavaScript -->
+      </div>
+
+      <table class="analytics-table" id="analytics-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Topic</th>
+            <th>Subtopic</th>
+            <th>Sub-subtopic</th>
+            <th>Worksheet Type</th>
+            <th>Question Count</th>
+            <th>With Answer Key</th>
+            <th>Generated At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+    </section>
+
+    <script>
+      async function loadAdminData() {
+        try {
+          const res = await fetch("/admin-data"); // Flask route to return JSON
+          const data = await res.json();
+
+          const tbody = document.querySelector("#analytics-table tbody");
+          const summaryCounts = {};
+
+          data.forEach((entry) => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+            <td>${entry.user}</td>
+            <td>${entry.topic}</td>
+            <td>${entry.subtopic}</td>
+            <td>${entry.subsubtopic}</td>
+            <td>${entry.worksheet_type || "Practice"}</td>
+            <td>${entry.question_count}</td>
+            <td>${entry.include_answer_key ? "Yes" : "No"}</td>
+            <td>${new Date(entry.timestamp).toLocaleString()}</td>
+          `;
+            tbody.appendChild(row);
+
+            const key = `${entry.topic} > ${entry.subtopic} > ${entry.subsubtopic}`;
+            summaryCounts[key] = (summaryCounts[key] || 0) + 1;
+          });
+
+          const summaryContainer = document.getElementById("summary-boxes");
+          Object.entries(summaryCounts).forEach(([label, count]) => {
+            const box = document.createElement("div");
+            box.className = "summary-box";
+            box.innerHTML = `<h4>${label}</h4><p>${count}</p>`;
+            summaryContainer.appendChild(box);
+          });
+        } catch (err) {
+          alert("Failed to load analytics data.");
+          console.error(err);
+        }
+      }
+
+      window.onload = loadAdminData;
+    </script>
+  </body>
+</html>

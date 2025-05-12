@@ -1,0 +1,84 @@
+Program 1:
+// Program 3
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n = 5;
+    int factorial = 1;
+
+    while (n > 0) {
+        factorial *= n;
+        n--;
+
+        cout << "n: " << n << ", factorial: " << factorial << endl;
+    }
+
+    return 0;
+}
+
+------------------------------
+
+Program 2:
+// Program 2
+#include <iostream>
+using namespace std;
+
+int main() {
+    int x = 1, count = 0;
+
+    while (x < 50) {
+        x = x * 2;
+        count++;
+
+        cout << "x: " << x << ", count: " << count << endl;
+    }
+
+    return 0;
+}
+
+------------------------------
+
+Program 3:
+// Program 8
+#include <iostream>
+using namespace std;
+
+int main() {
+    int counter = 0, limit = 5;
+
+    while (counter < limit) {
+        cout << "counter: " << counter << endl;
+        counter++;
+    }
+
+    cout << "Loop ended" << endl;
+
+    return 0;
+}
+
+------------------------------
+
+Program 4:
+// Program 5
+#include <iostream>
+using namespace std;
+
+int main() {
+    int num = 15;
+
+    while (num > 0) {
+        if (num % 3 == 0) {
+            cout << num << " is divisible by 3" << endl;
+        } else {
+            cout << num << " is not divisible by 3" << endl;
+        }
+
+        num -= 2;
+    }
+
+    return 0;
+}
+
+------------------------------
+
