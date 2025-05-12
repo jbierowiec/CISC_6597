@@ -102,7 +102,13 @@ def login():
 def login():
     # Handle preflight (OPTIONS) request
     if request.method == "OPTIONS":
-        return '', 204
+        # Handle preflight request
+        response = app.make_response('')
+        response.headers.add("Access-Control-Allow-Origin", "https://cisc-6597.onrender.com")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.status_code = 204
+        return response
     
     data = request.get_json()
     email = data.get("email")
