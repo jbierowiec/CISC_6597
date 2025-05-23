@@ -175,7 +175,7 @@ To start the backend and frontend servers, follow these steps:
      ```
    - Start the React frontend server:
      ```bash
-     npm run
+     npm start
      ```
 
 ---
