@@ -5,7 +5,7 @@ import random
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)  
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -114,6 +114,6 @@ def generate_subtraction_worksheet(num_problems=10, include_answer_key=False, ou
     pdf_path = os.path.join(output_dir, 'basic_subtraction.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-
+    
 # To generate a PDF
-generate_subtraction_worksheet(include_answer_key=True)
+#generate_subtraction_worksheet(include_answer_key=True)

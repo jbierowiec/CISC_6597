@@ -5,11 +5,12 @@ import os, random
 import sympy as sp
 from fpdf import FPDF
 from io import BytesIO
+import tempfile
 
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)  
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -77,15 +78,6 @@ def generate_integral_worksheet(num_problems=10, include_answer_key=False, outpu
     questions_per_page = 22
 
     for i, problem in enumerate(problems):
-        '''
-        image_stream = render_latex_to_image(problem)
-
-        if i % 2 == 0:
-            pdf.set_xy(left_x, y)
-        else:
-            pdf.set_xy(right_x, y)
-            y += line_height
-        '''
         page_index = i // questions_per_page
         local_index = i % questions_per_page
         column = local_index // max_rows  # 0 or 1
@@ -99,19 +91,20 @@ def generate_integral_worksheet(num_problems=10, include_answer_key=False, outpu
 
         image_stream = render_latex_to_image(problem)
 
-        '''
-        pdf.set_xy(x, y)
-        pdf.cell(90, 10, f"{i + 1}.", align='L', ln=0)
-        pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
-        pdf.ln(15)
-        '''
         pdf.set_xy(x, y)
         pdf.cell(20, 10, f"{i + 1}.", align='L', ln=0)
 
         # Always place image a fixed distance right of the number
         image_x = x + 20  # 20 units right of the number
         image_y = y - 2   # align vertically centered
-        pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
+
+        # Save the image_stream to a temporary PNG file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
+            tmp_img.write(image_stream.getvalue())
+            tmp_img_path = tmp_img.name
+
+        pdf.image(tmp_img_path, x=image_x, y=image_y, w=80, h=20)
+        #pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
         pdf.ln(15)
 
     if include_answer_key:
@@ -124,13 +117,6 @@ def generate_integral_worksheet(num_problems=10, include_answer_key=False, outpu
         y_start = 40
 
         for i, solution in enumerate(solutions):
-            '''
-            if i % 2 == 0:
-                pdf.set_xy(left_x, y)
-            else:
-                pdf.set_xy(right_x, y)
-                y += line_height
-            '''
             page_index = i // questions_per_page
             local_index = i % questions_per_page
             column = local_index // max_rows
@@ -144,24 +130,28 @@ def generate_integral_worksheet(num_problems=10, include_answer_key=False, outpu
 
             image_stream = render_latex_to_image(solution)
 
-            '''
-            pdf.set_xy(x, y)
-            pdf.cell(0, 10, f'{i + 1}. {solution}', ln=True)
-            pdf.ln(15)
-            '''
             pdf.set_xy(x, y)
             pdf.cell(20, 10, f"{i + 1}.", align='L', ln=0)
 
             # Always place image a fixed distance right of the number
             image_x = x + 20  # 20 units right of the number
             image_y = y - 2   # align vertically centered
-            pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
+            
+            # Save the image_stream to a temporary PNG file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
+                tmp_img.write(image_stream.getvalue())
+                tmp_img_path = tmp_img.name
+            
+            pdf.image(tmp_img_path, x=image_x, y=image_y, w=80, h=20)
+            #pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
             pdf.ln(15)
     
+    # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'basic_integration.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-
-generate_integral_worksheet(include_answer_key=True)
+    
+# To generate a PDF
+#generate_integral_worksheet(include_answer_key=True)

@@ -5,7 +5,7 @@ import random
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)  
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -106,11 +106,21 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
             pdf.cell(col_width, row_height, str(solution), 0, 0, 'L')
 
     # Save the PDF
+    '''
+    output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
+    os.makedirs(output_dir, exist_ok=True)
+    pdf_path = os.path.join(output_dir, 'generated_pdfs/basic_addition.pdf')
+    #pdf.output(pdf_path)
+    pdf.output(output_path)
+    '''
+
+    # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'basic_addition.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
 
+
 # To generate a PDF
-generate_addition_worksheet(include_answer_key=True)
+#generate_addition_worksheet(include_answer_key=True)

@@ -7,13 +7,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBMW4Em5ro27yTIPw3K2GIAvAbcaSyqCWk",
-  authDomain: "simple-project-f8aa7.firebaseapp.com",
-  projectId: "simple-project-f8aa7",
-  storageBucket: "simple-project-f8aa7.firebasestorage.app",
-  messagingSenderId: "678990721209",
-  appId: "1:678990721209:web:47d34228ab34b4e5ed2b68",
-  measurementId: "G-FSYGN9J7VC"
+  apiKey: "AIzaSyBU8Fr2JA6laOW5rkNXCX7o0fBxA1Nf0yM",
+  authDomain: "worksheets-ai-e3fb8.firebaseapp.com",
+  projectId: "worksheets-ai-e3fb8",
+  storageBucket: "worksheets-ai-e3fb8.firebasestorage.app",
+  messagingSenderId: "398890163026",
+  appId: "1:398890163026:web:51d87c8f9d4827cdc0f88b",
+  measurementId: "G-LJGB93RP33"
 };
 
 // Initialize Firebase

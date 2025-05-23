@@ -8,7 +8,7 @@ import os
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -116,10 +116,12 @@ def generate_fraction_subtraction_worksheet(num_problems=10, include_answer_key=
             pdf.image(image_filename, x=x + 12, y=y - 5, w=50, h=20)
             os.remove(image_filename)
 
+    # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'fraction_subtraction.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-    
-generate_fraction_subtraction_worksheet(include_answer_key=True)
+        
+# To generate a PDF
+#generate_fraction_subtraction_worksheet(include_answer_key=True)

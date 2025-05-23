@@ -12,7 +12,7 @@ function Login() {
 
       localStorage.setItem("userName", displayName);
 
-      const res = await fetch("https://cisc-6597-backend.onrender.com/login", {
+      const res = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

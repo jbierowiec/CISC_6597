@@ -5,7 +5,7 @@ import random
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)  
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -57,14 +57,6 @@ def generate_negative_multiplication_worksheet(num_problems=10, include_answer_k
 
     # Layout problems in columns
     for idx, problem in enumerate(problems):
-        '''
-        x = (idx % num_columns) * col_width + 10
-        y = (idx // num_columns) * row_height + 40
-        pdf.set_xy(x, y)
-        pdf.set_font('times', '', 16)
-        pdf.cell(10, 10, f"{idx + 1}.", align='R', ln=0)
-        pdf.cell(col_width, row_height, problem, 0, 0, 'L')
-        '''
         local_idx = idx % (rows_per_page * num_columns)
         page_idx = idx // (rows_per_page * num_columns)
 
@@ -91,14 +83,6 @@ def generate_negative_multiplication_worksheet(num_problems=10, include_answer_k
         pdf.ln(15)
 
         for idx, solution in enumerate(solutions):
-            '''
-            x = (idx % num_columns) * col_width + 10
-            y = (idx // num_columns) * row_height + 40
-            pdf.ln(10)
-            pdf.set_xy(x, y)
-            pdf.cell(10, 10, f"{idx + 1}.", align='R', ln=0)
-            pdf.cell(col_width, row_height, str(solution), 0, 0, 'L')
-            '''
             local_idx = idx % (rows_per_page * num_columns)
             page_idx = idx // (rows_per_page * num_columns)
 
@@ -120,6 +104,6 @@ def generate_negative_multiplication_worksheet(num_problems=10, include_answer_k
     pdf_path = os.path.join(output_dir, 'negative_multiplication.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-    
+        
 # To generate a PDF
-generate_negative_multiplication_worksheet(include_answer_key=True)
+#generate_negative_multiplication_worksheet(include_answer_key=True)

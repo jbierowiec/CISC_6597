@@ -29,15 +29,23 @@
             "Calculus 1",
             /*"Calculus 2",*/
           ],
-          Physics: ["Kinematic Equations", "Waves", "Torque"],
+          /*Physics: [
+            "Kinematic Equations", 
+            "Waves", 
+            "Torque"
+          ],*/
           /*Biology: [
             "Intro to Biology",
             "Genetics",
             "Cell Structure",
             "Ecology",
-          ],
-          Chemistry: ["Periodic Table", "Chemical Reactions", "Stoichiometry"],
-          "Computer Science": [
+          ],*/
+          /*Chemistry: [
+            "Periodic Table", 
+            "Chemical Reactions", 
+            "Stoichiometry"
+          ],*/
+          /*"Computer Science": [
             "Programming Basics",
             "Data Structures",
             "Algorithms",
@@ -101,16 +109,22 @@
             "Volume of a Pyramid",
           ],
           */
-          "Calculus 1": ["Integrals", "Derivatives"],
+          "Calculus 1": [
+            "Integrals", 
+            "Derivatives"
+          ],
           /*"Calculus 2": [],*/
-          /*"Intro to Biology": ["Biology Matching", "Biology Short Response"],*/
-          "Programming Basics": [
+          /*"Intro to Biology": [
+            "Biology Matching", 
+            "Biology Short Response"
+          ],*/
+          /*"Programming Basics": [
             "Code Tracing",
             "For Loops",
             "While Loops",
             "If Statements",
             "Variable Declaration",
-          ],
+          ],*/
         };
 
         subSubTopicDropdown.innerHTML =
@@ -134,7 +148,6 @@
         );
 
         if (topic && subTopic && subSubTopic) {
-          //const url = `/generate-${subSubTopic.toLowerCase()}`;
           const formattedSubSubTopic = subSubTopic
             .toLowerCase()
             .replace(/\s+/g, "-");
@@ -155,7 +168,6 @@
             const response = await fetch(url, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              //body: JSON.stringify({ includeAnswerKey }),
               body: JSON.stringify({ includeAnswerKey, questionCount }),
             });
 
@@ -219,37 +231,7 @@
           {{ name }} (Logout)
         </button>
       </div>
-
-      <!--
-      <div class="nav-right" id="nav-right">
-        <div class="user-dropdown">
-          <button class="user-button" onclick="toggleDropdown()">
-            {{ name }}
-          </button>
-          <div class="dropdown-menu" id="dropdown-menu">
-            <a href="/welcome?name={{ name }}">Profile</a>
-            --->
-      <!--<button onclick="logout()">Logout</button>-->
-      <!--<a href="/logout"><button type="button" id="logout-btn">Logout</button></a>-->
-      <!--
-            <a href="/logout">Logout</a>
-            
-          </div>
-        </div>
-      </div>-->
     </nav>
-
-    <!--
-    <nav>
-      <div class="nav-left">
-        <a href="http://localhost:3000/">Home</a>
-      </div>
-      <div class="nav-right">
-        <a href="/welcome">{{ name }}</a>
-      </div>
-    </nav>
-  -->
-
     <section id="home" class="section fade-section">
       <h1>Welcome {{ name }}!</h1>
       <p>
@@ -261,7 +243,7 @@
           <h2>Worksheet Generator</h2>
         </div>
         <div class="section-content">
-          <!-- Place the entire worksheet form HTML here -->
+          <!-- Entire worksheet form HTML here -->
           <form>
             <!--
             <label for="grade-level">What grade level?</label>
@@ -311,10 +293,10 @@
             <select id="topic" onchange="updateSubTopics()">
               <option value="">-- Select Topic --</option>
               <option value="Mathematics">Mathematics</option>
-              <option value="Biology">Biology</option>
+              <!--<option value="Biology">Biology</option>
               <option value="Physics">Physics</option>
               <option value="Computer Science">Computer Science</option>
-              <option value="Chemistry">Chemistry</option>
+              <option value="Chemistry">Chemistry</option>-->
             </select>
             <br /><br />
 

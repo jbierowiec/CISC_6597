@@ -6,11 +6,12 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
+import tempfile
 
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -73,15 +74,6 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
     questions_per_page = 24
 
     for i, problem in enumerate(problems):
-        '''
-        image_stream = render_latex_to_image(problem)
-
-        if i % 2 == 0:
-            pdf.set_xy(left_x, y)
-        else:
-            pdf.set_xy(right_x, y)
-            y += line_height
-        '''
         page_index = i // questions_per_page
         local_index = i % questions_per_page
         column = local_index // max_rows  # 0 or 1
@@ -97,7 +89,14 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
 
         pdf.set_xy(x, y)
         pdf.cell(90, 10, f"{i + 1}.", align='L', ln=0)
-        pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
+
+        # Save the image_stream to a temporary PNG file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
+            tmp_img.write(image_stream.getvalue())
+            tmp_img_path = tmp_img.name
+
+        pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=20)
+        #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
         pdf.ln(15)
 
     if include_answer_key:
@@ -110,15 +109,6 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
         y_start = 40
 
         for i, solution in enumerate(solutions):
-            '''
-            image_stream = render_latex_to_image(solution)
-
-            if i % 2 == 0:
-                pdf.set_xy(left_x, y)
-            else:
-                pdf.set_xy(right_x, y)
-                y += line_height
-            '''
             page_index = i // questions_per_page
             local_index = i % questions_per_page
             column = local_index // max_rows
@@ -134,12 +124,21 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
 
             pdf.set_xy(x, y)
             pdf.cell(90, 10, f"{i + 1}.", align='L', ln=0)
-            pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
 
-    pdf_output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
-    os.makedirs(pdf_output_dir, exist_ok=True)
-    pdf_path = os.path.join(pdf_output_dir, 'distributive_property.pdf')
+            # Save the image_stream to a temporary PNG file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
+                tmp_img.write(image_stream.getvalue())
+                tmp_img_path = tmp_img.name
+
+            pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
+            #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
+
+    # Save the PDF
+    output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
+    os.makedirs(output_dir, exist_ok=True)
+    pdf_path = os.path.join(output_dir, 'distributive_property.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-    
-generate_distributive_property_worksheet(include_answer_key=True)
+        
+# To generate a PDF
+#generate_distributive_property_worksheet(include_answer_key=True)

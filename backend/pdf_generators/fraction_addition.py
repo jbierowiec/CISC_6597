@@ -8,7 +8,7 @@ import os
 class PDF(FPDF):
     def header(self):
         script_dir = os.path.dirname(__file__)
-        image_path = os.path.join(script_dir, 'math.png')
+        image_path = os.path.join(script_dir, '../math.png')
 
         if not os.path.exists(image_path):
             raise FileNotFoundError(f"Image file not found: {image_path}")
@@ -52,67 +52,6 @@ def render_latex_to_image(latex_code, filename):
     plt.axis('off')
     plt.savefig(filename, dpi=300, bbox_inches='tight')
     plt.close()
-
-'''
-def generate_fraction_addition_worksheet(num_problems=10, include_answer_key=False, output_path="fraction_addition.pdf"):
-    pdf = PDF()
-    pdf.alias_nb_pages()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-    pdf.set_font('times', '', 16)
-    pdf.ln(10)
-
-    problems, solutions = generate_fraction_problems(num_problems)
-
-    left_x = 10
-    right_x = 110
-    y = 40
-    line_height = 20  # Increased line height for better spacing
-
-    for i, problem in enumerate(problems):
-        image_filename = f'fraction_{i + 1}.png'
-        render_latex_to_image(problem, image_filename)
-
-        if i % 2 == 0:
-            pdf.set_xy(left_x, y)
-        else:
-            pdf.set_xy(right_x, y)
-            y += line_height
-
-        pdf.cell(90, 10, f"{i + 1}.", align='L', ln=0)
-        pdf.image(image_filename, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=50, h=30)
-        os.remove(image_filename)
-
-    if include_answer_key:
-        pdf.add_page()
-        pdf.set_font('helvetica', 'B', 20)
-        pdf.cell(0, -10, 'Answer Key', 0, 1, 'C')
-        pdf.set_font('times', '', 16)
-        pdf.ln(10)
-
-        y = 40
-
-        for i, solution in enumerate(solutions):
-            image_filename = f'solution_{i + 1}.png'
-            latex_solution = rf"\frac{{{solution.numerator}}}{{{solution.denominator}}}"
-            render_latex_to_image(latex_solution, image_filename)
-
-            if i % 2 == 0:
-                pdf.set_xy(left_x, y)
-            else:
-                pdf.set_xy(right_x, y)
-                y += line_height
-
-            pdf.cell(90, 10, f"{i + 1}.", align='L', ln=0)
-            pdf.image(image_filename, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=50, h=30)
-            os.remove(image_filename)
-
-    output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
-    os.makedirs(output_dir, exist_ok=True)
-    pdf_path = os.path.join(output_dir, 'fraction_addition.pdf')
-    #pdf.output(pdf_path)
-    pdf.output(output_path)
-'''
 
 def generate_fraction_addition_worksheet(num_problems=10, include_answer_key=False, output_path="fraction_addition.pdf"):
     pdf = PDF()
@@ -176,10 +115,12 @@ def generate_fraction_addition_worksheet(num_problems=10, include_answer_key=Fal
             pdf.image(image_filename, x=x + 12, y=y - 5, w=50, h=20)
             os.remove(image_filename)
 
+    # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'fraction_addition.pdf')
     #pdf.output(pdf_path)
     pdf.output(output_path)
-
-generate_fraction_addition_worksheet(include_answer_key=True)
+    
+# To generate a PDF
+#generate_fraction_addition_worksheet(include_answer_key=True)
