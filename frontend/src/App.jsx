@@ -1,18 +1,64 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import AOS from "aos";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Login from "./components/Login";
-import Logout from "./components/Logout";
 import Section from "./components/Section";
 import ThreeJSViewer from "./components/ThreeJSViewer";
-
+import WorksheetsPage from "./pages/WorksheetsPage";
 import "./assets/style.css";
+
+function useSnapHashScroll() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // only handle on landing page
+    if (location.pathname !== "/") return;
+
+    const hash = location.hash;
+    if (!hash) return;
+
+    // Wait a tick for DOM to be ready
+    window.setTimeout(() => {
+      const sections = Array.from(document.querySelectorAll(".snap-section"));
+      const target = document.querySelector(hash);
+
+      if (!target || sections.length === 0) return;
+
+      // Find which snap-section contains the target id
+      const idx = sections.findIndex((s) => s === target);
+      if (idx >= 0) {
+        const y = idx * window.innerHeight;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      } else {
+        // Fallback: try normal scrollIntoView
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 80);
+  }, [location.pathname, location.hash]);
+}
 
 const HomePage = () => {
   const [confirmation, setConfirmation] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+
+  // AOS init once
+  useEffect(() => {
+    AOS.init({
+      duration: 850,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 80,
+    });
+  }, []);
+
+  // ✅ snap-hash scrolling
+  useSnapHashScroll();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,15 +68,12 @@ const HomePage = () => {
     try {
       const response = await fetch(
         "https://script.google.com/macros/s/AKfycbwyqr2Hks5-TOOrjy-fqTGflKLfHh8QTvi1PVPFbxcXVtBz7y5TxXL_AwCMaGU-Ibzp/exec",
-        {
-          method: "POST",
-          body: formData,
-        }
+        { method: "POST", body: formData }
       );
 
       const result = await response.json();
       if (result.result === "success") {
-        setConfirmation("✅ Your message was sent successfully!");
+        setConfirmation("✅ Message sent successfully!");
         setShowNotification(true);
         form.reset();
       } else {
@@ -45,94 +88,218 @@ const HomePage = () => {
   };
 
   return (
-    <main>
-      {/* Hero Section */}
-      <section id="home" className="hero-section">
-        <div className="hero-content">
-          <h1>Welcome to Worksheets.ai!</h1>
-          <p>
-            Explore dynamically generated worksheets covering all subjects of
-            STEM!
-          </p>
+    <main className="snap-container">
+      {/* HERO */}
+      <section id="home" className="snap-section hero-wrap">
+        <div className="container">
+          <div className="row align-items-center g-4">
+            <div className="col-12 col-lg-6" data-aos="fade-right">
+              <span className="badge text-bg-primary-subtle text-primary mb-3">
+                STEM Worksheets • PDF Export • Fast
+              </span>
+
+              <h1 className="display-5 fw-bold mb-3">
+                Generate clean, printable worksheets in seconds.
+              </h1>
+
+              <p className="lead text-secondary mb-4">
+                Pick a topic, choose how many questions you want, and download a
+                polished PDF — with or without an answer key.
+              </p>
+
+              <div className="d-flex flex-column flex-sm-row gap-2">
+                <a className="btn btn-primary btn-lg" href="/worksheets">
+                  Try the Generator
+                </a>
+                <a className="btn btn-outline-dark btn-lg" href="/#about">
+                  Learn More
+                </a>
+              </div>
+
+              <div className="mt-4 d-flex flex-wrap gap-3 text-secondary small">
+                <span>✅ No login required</span>
+                <span>✅ Works on mobile</span>
+                <span>✅ Instant download</span>
+              </div>
+            </div>
+
+            <div className="col-12 col-lg-6" data-aos="fade-left">
+              <div className="three-card">
+                <ThreeJSViewer />
+              </div>
+            </div>
+          </div>
         </div>
-        <ThreeJSViewer />
       </section>
 
-      <hr />
-
-      {/* About Section */}
-      <Section id="about" title="About Worksheets.ai">
-        <div className="about-box">
-          <p>
-            Worksheets.ai is a dynamic STEM learning platform that blends the
-            power of AI with the needs of modern education. Whether you're a
-            student aiming to sharpen your skills or a teacher looking to create
-            engaging material instantly, we have you covered.
-          </p>
-          <ul>
-            <li>✅ AI-powered worksheet generation in seconds</li>
-            <li>✅ Built-in answer keys for quick feedback</li>
-            <li>✅ Export to clean, printable PDFs</li>
-            <li>✅ Powerful analytics and usage tracking for instructors</li>
-            <li>✅ Tailored problem sets across math, science, and more</li>
-          </ul>
-        </div>
-      </Section>
-
-      <hr />
-
-      {/* Pricing Section */}
-      <Section id="product-demo" title="Pricing Plans">
-        <div className="pricing-cards-rectangular">
-          <div className="card basic">
-            <h3>$5/month - Basic</h3>
-            <ul>
-              <li>Unlimited worksheet generation</li>
-              <li>Answer keys included</li>
-              <li>PDF export</li>
-            </ul>
+      {/* ABOUT */}
+      <Section
+        id="about"
+        title="Built for students and teachers"
+        subtitle="A simple workflow: choose a topic → generate → download."
+        aos="fade-up"
+      >
+        <div className="row g-3 justify-content-center">
+          <div className="col-12 col-md-6 col-lg-4">
+            <div className="feature-card h-100">
+              <h5 className="mb-2">Fast generation</h5>
+              <p className="text-secondary mb-0">
+                Create focused practice sets instantly — perfect for homework,
+                quizzes, or tutoring.
+              </p>
+            </div>
           </div>
-          <div className="card premium">
-            <h3>$10/month - Premium</h3>
-            <ul>
-              <li>All Basic features</li>
-              <li>AI-enhanced problem sets</li>
-              <li>Classroom tools</li>
-              <li>Worksheet analytics</li>
-            </ul>
+
+          <div className="col-12 col-md-6 col-lg-4">
+            <div className="feature-card h-100">
+              <h5 className="mb-2">Answer keys</h5>
+              <p className="text-secondary mb-0">
+                Export with an optional answer key to speed up grading and
+                feedback.
+              </p>
+            </div>
           </div>
-          <div className="card enterprise">
-            <h3>$50/month - Enterprise</h3>
-            <ul>
-              <li>All Premium features</li>
-              <li>Custom branding</li>
-              <li>Admin dashboard</li>
-              <li>Priority support</li>
-            </ul>
+
+          <div className="col-12 col-md-6 col-lg-4">
+            <div className="feature-card h-100">
+              <h5 className="mb-2">Clean PDFs</h5>
+              <p className="text-secondary mb-0">
+                Worksheets are formatted to print well and look professional.
+              </p>
+            </div>
           </div>
         </div>
       </Section>
 
-      <hr />
-
-      {/* Contact Section */}
-      <Section id="contact" title="Contact Us">
-        <p>Reach out to us with feedback or collaboration opportunities!</p>
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <textarea name="message" placeholder="Your Message" rows="5" required />
-          <button type="submit">Send Message</button>
-        </form>
-
-        {showNotification && (
-          <div className="popup-notification">
-            {confirmation}
-            <button onClick={() => setShowNotification(false)} className="close-btn">
-              &times;
-            </button>
+      {/* PLANS */}
+      <Section
+        id="product-demo"
+        title="Simple plans"
+        subtitle="Start free with the demo — upgrade later."
+        aos="fade-up"
+      >
+        <div className="row g-3">
+          <div className="col-12 col-md-4">
+            <div className="pricing-card h-100">
+              <h5 className="mb-1">Basic</h5>
+              <div className="price">
+                $5<span>/mo</span>
+              </div>
+              <ul className="mt-3">
+                <li>Unlimited worksheet generation</li>
+                <li>Answer keys</li>
+                <li>PDF export</li>
+              </ul>
+              <a className="btn btn-outline-dark w-100 mt-3" href="/worksheets">
+                Try Demo
+              </a>
+            </div>
           </div>
-        )}
+
+          <div className="col-12 col-md-4">
+            <div className="pricing-card pricing-highlight h-100">
+              <h5 className="mb-1">Premium</h5>
+              <div className="price">
+                $10<span>/mo</span>
+              </div>
+              <ul className="mt-3">
+                <li>All Basic features</li>
+                <li>More advanced sets</li>
+                <li>Classroom tools</li>
+              </ul>
+              <a className="btn btn-primary w-100 mt-3" href="/worksheets">
+                Try Demo
+              </a>
+            </div>
+          </div>
+
+          <div className="col-12 col-md-4">
+            <div className="pricing-card h-100">
+              <h5 className="mb-1">Enterprise</h5>
+              <div className="price">
+                $50<span>/mo</span>
+              </div>
+              <ul className="mt-3">
+                <li>Admin dashboard</li>
+                <li>Custom branding</li>
+                <li>Priority support</li>
+              </ul>
+              <a className="btn btn-outline-dark w-100 mt-3" href="/#contact">
+                Contact
+              </a>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* CONTACT */}
+      <Section
+        id="contact"
+        title="Contact"
+        subtitle="Questions, partnerships, or feedback — send a note."
+        aos="fade-up"
+      >
+        <div className="row justify-content-center">
+          <div className="col-12 col-lg-7">
+            <div className="contact-card">
+              <form onSubmit={handleSubmit} className="row g-3">
+                <div className="col-12 col-md-6">
+                  <label className="form-label">Name</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    name="name"
+                    required
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <label className="form-label">Email</label>
+                  <input
+                    className="form-control"
+                    type="email"
+                    name="email"
+                    required
+                  />
+                </div>
+
+                <div className="col-12">
+                  <label className="form-label">Message</label>
+                  <textarea
+                    className="form-control"
+                    name="message"
+                    rows="5"
+                    required
+                  />
+                </div>
+
+                <div className="col-12 d-flex flex-column flex-sm-row gap-2">
+                  <button className="btn btn-primary btn-lg" type="submit">
+                    Send
+                  </button>
+                  <a className="btn btn-outline-dark btn-lg" href="/worksheets">
+                    Try the Generator
+                  </a>
+                </div>
+              </form>
+
+              {showNotification && (
+                <div
+                  className="alert alert-success mt-3 position-relative"
+                  role="alert"
+                >
+                  {confirmation}
+                  <button
+                    type="button"
+                    className="btn-close position-absolute end-0 top-0 m-3"
+                    aria-label="Close"
+                    onClick={() => setShowNotification(false)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </Section>
     </main>
   );
@@ -144,8 +311,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
+        <Route path="/worksheets" element={<WorksheetsPage />} />
       </Routes>
       <Footer />
     </Router>

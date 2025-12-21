@@ -1,27 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
-const Section = ({ id, title, children }) => {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-in");
-        }
-      },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-  }, []);
-
+const Section = ({ id, title, subtitle, children, aos = "fade-up" }) => {
   return (
-    <section id={id} ref={ref} className="section fade-section">
-      <div className="section-container">
-        <div className="section-title">
-          <h2>{title}</h2>
+    <section id={id} className="snap-section">
+      <div className="container" data-aos={aos}>
+        <div className="text-center mb-4">
+          <h2 className="section-title">{title}</h2>
+          {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
         </div>
-        <div className="section-content">{children}</div>
+        {children}
       </div>
     </section>
   );

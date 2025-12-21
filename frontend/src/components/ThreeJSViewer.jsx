@@ -27,7 +27,11 @@ const ThreeJSViewer = () => {
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.outputEncoding = THREE.sRGBEncoding; // ✅ enhances brightness
+
+    // NEW Three.js API:
+    // Replace outputEncoding with outputColorSpace
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
     container.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
@@ -38,7 +42,7 @@ const ThreeJSViewer = () => {
     controls.enableZoom = false;
 
     // === Lighting ===
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2); // ✅ brighter base light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -50,26 +54,26 @@ const ThreeJSViewer = () => {
     const texture1 = loader.load("/images/basic_addition.png");
     const texture2 = loader.load("/images/quadratic.png");
 
-    // ✅ Set texture filters and encoding for sharpness
-    [texture1, texture2].forEach(texture => {
-      texture.encoding = THREE.sRGBEncoding;
-      texture.minFilter = THREE.NearestFilter;   // ⬅️ try this if you want max edge sharpness
-      texture.magFilter = THREE.NearestFilter;      
+    // Updated texture colorspace and filters
+    [texture1, texture2].forEach((texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
     });
 
-    // === Materials (fully opaque, no fading) ===
+    // === Materials ===
     const material1 = new THREE.MeshBasicMaterial({
       map: texture1,
       side: THREE.DoubleSide,
       opacity: 1.0,
-      transparent: false
+      transparent: false,
     });
 
     const material2 = new THREE.MeshBasicMaterial({
       map: texture2,
       side: THREE.DoubleSide,
       opacity: 1.0,
-      transparent: false
+      transparent: false,
     });
 
     // === Geometry and Meshes ===

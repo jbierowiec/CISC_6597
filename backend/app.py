@@ -1,8 +1,9 @@
-from flask import Flask, send_from_directory, request, render_template, redirect, jsonify, session, url_for, send_file, json, Response, stream_with_context
+from flask import Flask, send_from_directory, request, jsonify, session, send_file, json
 from flask_cors import CORS
 from fpdf import FPDF
 from datetime import datetime, timezone
 import os
+
 
 from pdf_generators.basic_addition import generate_addition_worksheet
 from pdf_generators.basic_subtraction import generate_subtraction_worksheet
@@ -26,18 +27,14 @@ from pdf_generators.basic_derivation import generate_derivation_worksheet
 from pdf_generators.basic_integration import generate_integral_worksheet
 
 
-
-
-OUTPUT_DIR = os.path.join(os.getcwd(), "generated_pdfs") 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "generated_pdfs")
+#OUTPUT_DIR = os.path.join(os.getcwd(), "generated_pdfs") 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app = Flask(__name__)
 app.secret_key = 'AIzaSyBMW4Em5ro27yTIPw3K2GIAvAbcaSyqCWk'
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
-
-ADMIN_EMAIL = "jbierowiec@fordham.edu"
-
-
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, question_count, include_answer_key):
@@ -66,127 +63,17 @@ def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, quest
         json.dump(logs, f, indent=2)
 
 
-
-'''
-@app.route('/')
-#def home():
-#    return "Backend Running"
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    return send_from_directory(app.static_folder, path)
-'''
-
-'''
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    name = data.get('name')
-    role = data.get('role')
-
-    session['email'] = email
-    session['name'] = name
-    session['role'] = role
-
-    if role == 'admin' and email == ADMIN_EMAIL:
-        return jsonify({"redirect": "http://localhost:5000/admin"})
-    else:
-        return jsonify({"redirect": "http://localhost:5000/user"})
-'''
-
-'''
-@app.route("/login", methods=["POST", "OPTIONS"])
-def login():
-    # Handle preflight (OPTIONS) request
-    if request.method == "OPTIONS":
-        # Handle preflight request
-        response = app.make_response('')
-        response.headers.add("Access-Control-Allow-Origin", "https://cisc-6597.onrender.com")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-        response.status_code = 204
-        return response
-    
-    data = request.get_json()
-    email = data.get("email")
-    name = data.get("name")
-    role = data.get("role")
-
-    # Authentication logic here
-    redirect_url = "/admin" if role == "admin" and email == ADMIN_EMAIL else "/user"
-    return jsonify({"redirect": redirect_url})
-'''
-
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.get_json()
-    email = data.get("email")
-    name = data.get("name")
-    role = data.get("role")
-
-    session['email'] = email
-    session['name'] = name
-    session['role'] = role
-
-    if role == "admin" and email == ADMIN_EMAIL:
-        return jsonify({"redirect": "http://localhost:5000/admin"})
-    else:
-        return jsonify({"redirect": "http://localhost:5000/user"})
-
-# Serve React frontend
 @app.route("/")
 def index():
-    #return send_from_directory(app.static_folder, "index.html")
     return "Backend Running"
 
 @app.route("/<path:path>")
 def static_files(path):
     return send_from_directory(app.static_folder, path)
 
-@app.route('/admin')
-def admin():
-    if session.get('email') == ADMIN_EMAIL and session.get('role') == 'admin':
-        return render_template('admin.html')
-    return redirect('/')
-
-@app.route('/admin-data')
-def admin_data():
-    if session.get('email') != ADMIN_EMAIL:
-        return jsonify([])
-
-    log_path = "worksheet_log.json"
-    if not os.path.exists(log_path):
-        return jsonify([])
-
-    with open(log_path, "r") as f:
-        data = json.load(f)
-
-    return jsonify(data)
-
-@app.route('/user')
-def user():
-    if session.get('email'):
-        name = session.get('name', 'User') #or session.get('email', 'User')
-        return render_template('user.html', name=name)
-        #return render_template('user.html')
-    return redirect('/')
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('http://localhost:3000/logout')
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    filepath = os.path.join(OUTPUT_DIR, filename)
-    if os.path.exists(filepath):
-        return send_file(filepath, as_attachment=True)
-    return jsonify({"error": "File not found"}), 404
-
-
+@app.route("/downloads/<path:filename>")
+def downloads(filename):
+    return send_from_directory(OUTPUT_DIR, filename, as_attachment=True)
 
 
 @app.route('/generate-basic-addition', methods=['POST'])
@@ -194,8 +81,6 @@ def generate_addition():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_addition_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -214,7 +99,7 @@ def generate_addition():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -224,8 +109,6 @@ def generate_subtraction():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_subtraction_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -244,7 +127,7 @@ def generate_subtraction():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -254,8 +137,6 @@ def generate_multiplication():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_multiplication_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -274,7 +155,7 @@ def generate_multiplication():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -284,8 +165,6 @@ def generate_division():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_division_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -304,21 +183,17 @@ def generate_division():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
    
-
-
 
 @app.route('/generate-negative-addition', methods=['POST'])
 def generate_negative_addition():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"negative_addition_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -337,7 +212,7 @@ def generate_negative_addition():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -347,8 +222,6 @@ def generate_negative_subtraction():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"negative_subtraction_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -367,7 +240,7 @@ def generate_negative_subtraction():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -377,8 +250,6 @@ def generate_negative_multiplication():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"negative_multiplication_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -397,7 +268,7 @@ def generate_negative_multiplication():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -407,8 +278,6 @@ def generate_negative_division():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"negative_division_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -427,21 +296,17 @@ def generate_negative_division():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-
-
 
 @app.route('/generate-fraction-addition', methods=['POST'])
 def generate_fraction_addition():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"fraction_addition_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -460,7 +325,7 @@ def generate_fraction_addition():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -470,8 +335,6 @@ def generate_fraction_subtraction():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"fraction_subtraction_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -490,7 +353,7 @@ def generate_fraction_subtraction():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -500,8 +363,6 @@ def generate_fraction_multiplication():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"fraction_multiplication_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -520,7 +381,7 @@ def generate_fraction_multiplication():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -530,8 +391,6 @@ def generate_fraction_division():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"fraction_division_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -550,12 +409,10 @@ def generate_fraction_division():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
 
 
 @app.route('/generate-distributive-property', methods=['POST'])
@@ -563,8 +420,6 @@ def generate_distributive_property():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"distributive_property_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -583,7 +438,7 @@ def generate_distributive_property():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -593,8 +448,6 @@ def generate_quadratic_formula():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"quadratic_formula_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -613,12 +466,10 @@ def generate_quadratic_formula():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
 
 
 @app.route('/generate-integrals', methods=['POST'])
@@ -626,8 +477,6 @@ def generate_integrals():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_integration_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -646,7 +495,7 @@ def generate_integrals():
         
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -656,8 +505,6 @@ def generate_derivatives():
     data = request.json
     include_answer_key = data.get('includeAnswerKey', False)
     num_problems = data.get("questionCount", 10)
-
-    # Generate unique filename and path
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     filename = f"basic_derivation_{timestamp}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -676,13 +523,10 @@ def generate_derivatives():
 
         return jsonify({
             "message": f"Worksheet with {num_problems} questions generated successfully.",
-            "downloadUrl": f"/download/{filename}"
+            "downloadUrl": f"/downloads/{filename}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
 
 
 @app.route('/download/<worksheet_type>')
@@ -696,8 +540,6 @@ def download(worksheet_type):
         "negative_subtraction": "generated_pdfs/negative_subtraction.pdf",
         "negative_multiplication": "generated_pdfs/negative_multiplication.pdf",
         "negative_division": "generated_pdfs/negative_division.pdf",
-        #"biology_matching": "generated_pdfs/biology_matching.pdf",
-        #"biology_short_response": "generated_pdfs/biology_short_response.pdf",
         "basic_integration": "generated_pdfs/basic_integration.pdf",
         "basic_derivation": "generated_pdfs/basic_derivation.pdf",
         "fraction_addition": "generated_pdfs/fraction_addition.pdf",
@@ -706,15 +548,12 @@ def download(worksheet_type):
         "fraction_division": "generated_pdfs/fraction_division.pdf",
         "distributive_property": "generated_pdfs/distributive_property.pdf",
         "quadratic_formula": "generated_pdfs/quadratic_formula.pdf",
-        #"circle": "generated_pdfs/circles.pdf",
     }
 
     file_path = file_mapping.get(worksheet_type)
     if file_path and os.path.exists(file_path):
         return send_file(file_path, as_attachment=True)
     return "File not found", 404
-
-
 
 
 if __name__ == "__main__":
