@@ -2,8 +2,10 @@ from flask import Flask, send_from_directory, request, jsonify, session, send_fi
 from flask_cors import CORS
 from fpdf import FPDF
 from datetime import datetime, timezone
+from dotenv import load_dotenv
 import os
 
+load_dotenv()  
 
 from pdf_generators.basic_addition import generate_addition_worksheet
 from pdf_generators.basic_subtraction import generate_subtraction_worksheet
@@ -33,7 +35,7 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "generated_pdfs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app = Flask(__name__)
-app.secret_key = 'AIzaSyBMW4Em5ro27yTIPw3K2GIAvAbcaSyqCWk'
+app.secret_key = os.getenv("SECRET_KEY", "dev-fallback-secret")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
