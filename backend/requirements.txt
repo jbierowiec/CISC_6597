@@ -6,4 +6,5 @@ fpdf2==2.8.2
 matplotlib==3.8.4
 sympy==1.12
 Flask==3.0.3
+python-dotenv==1.0.1
 gunicorn==23.0.0
