@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+__MACOSX/
+
+# Node
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Local env files
+.env
+.env.*
+frontend/.env
+frontend/.env.*
