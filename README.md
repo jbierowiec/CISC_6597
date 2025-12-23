@@ -1,8 +1,10 @@
-# CISC 6597 Computer Science Capstone Project
+# CISC 6597 Computer Science Capstone Project - Worksheet AI
 
-This repository contains the source code for the Computer Science Capstone Project. The application is built using React for the frontend and Flask/Django for the backend, with the website designed to be dynamic and responsive using HTML and CSS, ensuring compatibility with both personal computers and mobile devices. The database that stores all the sudoku games is a SQLite database.
+This repository contains the source code for the Computer Science Capstone Project - Worksheet AI. Worksheet AI is a full-stack web application that dynamically generates print-ready math worksheets in PDF format. It allows students, educators, and self-learners to instantly create customized worksheets with optional answer keys—no accounts, no setup, just learning. If you would like to check out the project, click the link down below:
 
-## Full Stack Digram 
+[Worksheet AI](https://worksheet-ai.up.railway.app)
+
+<!-- ## Full Stack Digram -->
 
 <!-- ![Full Stack Diagram](diagrams/FullStack%20Diagram.png) -->
 
@@ -10,9 +12,41 @@ This repository contains the source code for the Computer Science Capstone Proje
 
 ## Overview
 
-The Computer Science Capstone Project is a web-based application that dynamically generates worksheets for students, instructors, or learners alike. This web application provides users with a unique learning experience. Users can select what subject they would like to create a worksheet for, narrow down the sub-topic of that subject and within that sub-topic, choose a worksheet to generate with or without an answer key. The user also has the ability to choose how many questions that would like to have generated on the worksheet. Once the user chooses to generate a worksheet, the worksheet will start downloading and once download is complete, the user will have a PDF on their screen that they can print out and work on, on their own. 
+The Computer Science Capstone Project is a web-based application that dynamically generates worksheets for students, instructors, or learners alike. This web application provides users with a unique learning experience. Users can select what subject/topic they would like to create a worksheet for, narrow down the sub-topic of that subject/topic and within that sub-topic, and choose a worksheet to generate with or without an answer key. The user also has the ability to choose how many questions that would like to have generated on the worksheet. Once the user chooses to generate a worksheet, the worksheet will start downloading and once download is complete, the user will have a PDF on their screen that they can print out and work on, on their own.
 
-## Story Board Diagram
+## Features
+
+- Dynamic Worksheet Generation
+  - Choose a math topic and subtopic
+  - Select the number of questions
+  - Option to include or exclude an answer key
+- Automatic PDF Download
+  - Clean, printable worksheet layout
+  - Instant download after generation
+- Structured Educational Design
+  - Designed for classroom use, tutoring, and self-study
+  - Clear formatting and progressive difficulty
+- Responsive Web Interface
+  - Works on desktop, tablet, and mobile devices
+- Cloud Deployed
+  - Fully deployed on Railway
+  - Frontend + backend served as a unified application
+
+## Technologies Used
+- Frontend
+  - React
+  - HTML5 / CSS3
+  - JavaScript
+  - Responsive layout and modern UI components
+- Backend
+  - Python (Flask)
+  - PDF generation via custom worksheet generators
+  - File logging and worksheet tracking
+- Infrastructure
+  - Railway (deployment & hosting)
+  - JSON logging for worksheet history
+  - Environment-based configuration
+<!-- ## Story Board Diagram -->
 
 <!--Here are our story board of how we envisioned for the Sudoku game to look like, as well as the in game play features:
 
@@ -26,56 +60,50 @@ The Computer Science Capstone Project is a web-based application that dynamicall
 
 ```plaintext
 ├── backend
-│   ├── __pycache__/
 │   ├── generated_pdfs/
 │   ├── pdf_generators/
-│   ├── static
-│   │   ├── firebase.js
-│   │   ├── login.js
-│   │   └── style.css
-│   ├── templates
-│   │   ├── admin.html
-│   │   └── user.html
-│   ├── .DS_Store
 │   ├── app.py
 │   ├── math.png
+│   ├── requirements.txt
 │   └── worksheet_log.json
 ├── frontend
+│   ├── node_modules/
 │   ├── public
 │   │   ├── images
 │   │   │   ├── basic_addition.png
 │   │   │   └── quadratic.png
-│   │   ├── favicon.ico
-│   │   └── index.html
+│   │   ├── index.html
+│   │   ├── manifest.json
+│   │   └── robots.txt
 │   ├── src
 │   │   ├── assets
 │   │   │   └── style.css
 │   │   ├── components
 │   │   │   ├── Footer.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── Logout.jsx
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Section.jsx
 │   │   │   └── ThreeJSViewer.jsx
+│   │   ├── pages
+│   │   │   └── WorksheetsPage.jsx
 │   │   ├── App.jsx
-│   │   ├── firebase.js
-│   ├── .gitignore
+│   │   └── index.js
+│   ├── .env
 │   ├── package-lock.json
 │   └── package.json
+├── .gitignore
 └── README.md
 ```
 
-## Database 
+<!-- ## Database -->
 <!--
-  - **Sudoku Games**: This includes pre-made Sudoku games with varying levels of difficulty, sizes, as well as solutions. 
+  - **Sudoku Games**: This includes pre-made Sudoku games with varying levels of difficulty, sizes, as well as solutions.
   - **Sessions**: This includes the ability for there to be multiple sessions or instances of the same game to be running on a different browser with a uniquey generated ID
   - **Cells**: A method of storing information about a cell, whether it was a prefilled (generated) cell, and empty cell, where the cell is located with respect to the entire board grid, the value that it has, the solution for all the empty cells as well as an ability to enter notes on a cell
   - **History**: This includes information about a session, a value that is entered into an empty cell, previous values entered into previously entered cells, a timestamp of when moves are made, as well as a flas that determines if a move made by the user is correct or not.
-  - **Notes**: This allows the user to enter multiple values into any given empty cell in such a way that the value is smaller than the rest and it can be cleared. 
+  - **Notes**: This allows the user to enter multiple values into any given empty cell in such a way that the value is smaller than the rest and it can be cleared.
 
 ![Database Schema](diagrams/Database_Schema_by_Mark.jpg)
 -->
-## Features
 
 <!--
 ### Light and Dark Mode
@@ -113,21 +141,21 @@ The Computer Science Capstone Project is a web-based application that dynamicall
 - The user can press this button at any point in the game and it will work in a such a way, that all the user's moves are stored and recorded to be either correct or incorrect moves. The Undo Until Correct button will search through the game's history and find the very first incorrect value inputted by the user and making sure that all the moves prior to the incorrect move are all correct. For example:
   - If the very first move made by the user is incorrect, every move will be cleared.
   - If the user made three correct moves followed by two incorrect moves, the two incorrect moves will be removed ant the three correct moves will remain displayed
-  - If the user made a correct, correct, incorrect, correct, incorrect set of moves, the two incorrect moves, as well as the correct move in between the two incorrect moves will be removed. Leaving only the original two correct moves. 
+  - If the user made a correct, correct, incorrect, correct, incorrect set of moves, the two incorrect moves, as well as the correct move in between the two incorrect moves will be removed. Leaving only the original two correct moves.
 
 ### Get Specific Hint Button
-- The user can click this button at any point during the game. The user first specifies the empty cell they would like to get a hint for, and then the correct value for that given cell's row and column will be provided and will be autofilled for the user. 
+- The user can click this button at any point during the game. The user first specifies the empty cell they would like to get a hint for, and then the correct value for that given cell's row and column will be provided and will be autofilled for the user.
 
 ### Get Random Hint Button
 - The user can click this button at any point during the game. In contrast to the get specific hint button, the user does not specify any cell, but clicks this button directly, mid-game. When clicking this button thw following two things can occur:
  - If all moves by the user are correct, an empty cell is found at random and is filled in by the game
- - Otherwise if a user made an incorrect value, that incorrect value is identified by the program, it is removed and replaced by the correct value that should be in that given cell. 
+ - Otherwise if a user made an incorrect value, that incorrect value is identified by the program, it is removed and replaced by the correct value that should be in that given cell.
 
 ### Set Note Button
 - When this button is clicked on, this allows the user to enter more than one value in such a way that the values are a smaller font size that the regular game size numbers, and these noted numbers are potential candidates for whether or not that number should be inputted into that given cell. When this mode is on, any every empty cell is allowed to have more than one value. If it is off, then the user is only allowed to enter one value per cell as by the game rules logic.
 
 ### Clear Note Button
-- When the user is sure of inputting a specific value into a previously noted cell, the user then clicks this button, which removes all the notes made in a cell, allowing the user to now enter a single value into that cell. 
+- When the user is sure of inputting a specific value into a previously noted cell, the user then clicks this button, which removes all the notes made in a cell, allowing the user to now enter a single value into that cell.
 
 ### Number Buttons
 - If the user clicks on a Number Button without first clicking a empty cell, a message will show up on the screen, notifying the user that they should select an empty cell first.
@@ -136,36 +164,38 @@ The Computer Science Capstone Project is a web-based application that dynamicall
 ### Error Flags
 - If the user enters any value in a cell where the row, column, or 2x2, 3x3, or 4x4 square (depending on the game board size) contains that same value, the cells where there are duplicates will turn red indicating an error in sudoku logic, meaning the user will have to input a different value in order to proceed in continuing the sudoku game.
 - If the user makes three such mistakes in the game, a message box will come up notifying the user that they have lost the game, displaying a 10 second timer that decerements down. Once complete, a new game is loaded onto the scree.
-- If the user has incorreclty inputted values in the game, and they click on the "Check Solution" button, they will be notified that their inputed are incorrect. 
+- If the user has incorreclty inputted values in the game, and they click on the "Check Solution" button, they will be notified that their inputed are incorrect.
 -->
-### Use Case Diagram
+<!-- ### Use Case Diagram -->
 <!--
 ![General Use Case Diagram](diagrams/High%20Level%20Use%20case%20diagram.png)
 -->
-### Activity Diagram
+<!-- ### Activity Diagram -->
 <!--
 ![Validating a Value Activity Diagram](diagrams/Validating%20a%20Value.png)
 
 ![Undo Until Correct Activity Diagram](diagrams/Activity%20diagram%20UndoTillCorrect.png)
 -->
-### Sequence Diagram
+<!-- ### Sequence Diagram -->
 <!--
 ![Undo Sequence Diagram](diagrams/Sequence%20diagram%20Undo%20By%20Mark.jpg)
 -->
----
+
+<!-- ##
 
 ## Setup Instructions
 
 To start the backend and frontend servers, follow these steps:
 
 1. **Backend**:
+
    - Open a terminal, navigate to the `backend` directory:
      ```bash
      cd backend
      ```
    - Start the Flask/Django backend server:
      ```bash
-     python app.py 
+     python app.py
      ```
 
 2. **Frontend**:
@@ -180,22 +210,26 @@ To start the backend and frontend servers, follow these steps:
 
 ---
 
-## Changes Made
+## Changes Made -->
+
 <!--
-- Originally most of the buttons fetched data from a `games.json` file. Since then, the code has been refactored in considering multiple games running in different sessions, as well as optimizing the database, the data is now fetched from a `db.sqlite3` file. This decision was made due to SQLite being a better data model to store our games, as well as it allowing for seamless Backend and Frontend communication. 
-- Original functions that were related to the `games.json` file have either been deleted or adjusted accordingly when the refactoring process was done. 
+- Originally most of the buttons fetched data from a `games.json` file. Since then, the code has been refactored in considering multiple games running in different sessions, as well as optimizing the database, the data is now fetched from a `db.sqlite3` file. This decision was made due to SQLite being a better data model to store our games, as well as it allowing for seamless Backend and Frontend communication.
+- Original functions that were related to the `games.json` file have either been deleted or adjusted accordingly when the refactoring process was done.
 -->
 
----
+<!--##
 
-## Testing 
+## Testing
+
+-->
+
 <!--
 - We have done the following tests during the course of the project:
-  **Unit Testing:** We tested individual functions or components to ensure they behave as expected. For example: 
+  **Unit Testing:** We tested individual functions or components to ensure they behave as expected. For example:
   - We validated the sudoku grid via enforcing row, column, and subgrid uniqueness.
   - We tested the undo and undo until correct buttons to see if the incorrect moves would be popped.
-  - We validated the get hint button, through extracting the correct value from the game solution. 
-  - These tests were run Using `pytest` or `unittest` 
+  - We validated the get hint button, through extracting the correct value from the game solution.
+  - These tests were run Using `pytest` or `unittest`
   **API Testing:** We tested proper requests and communication from the frontend and backend
   - We used this for validating new sessions being created when a new game is played and if the same game is played under two different browsers
   - We validated backend and frontend communication for the check solution, get hint, and undo button functionalities
@@ -233,12 +267,12 @@ We used Django’s reverse and resolve functions to ensure that each URL is conn
   - Mark:
     - Did most work primarily in the `views.py`, `models.py`, and `urls.py` files all located under the `backend` directory.
     - Implemented the display of the varying sizes and difficulty of the game board when the games were stored in the `games.json` file.
-    - Transfered the the data to a `db.sqlite3` database. 
-    - Implemented the entities that are stored in the `models.py` file. 
+    - Transfered the the data to a `db.sqlite3` database.
+    - Implemented the entities that are stored in the `models.py` file.
     - Altered functions along with Jonathan that were originally created by Jan.
     - Implemented the get game, get current puzzle, new session, new game, get history, update cell, and undo requests.
     - Created the database schema diagram as well as the activity diagram for the undo function in the `diagrams` directory.
-  - Jan: 
+  - Jan:
     - Did most work primarily in the `index.html` file, `styles.css` file, and `app.py` file all located under the `frontend` directory, as well as the `test.py` file located under the `backend` directory.
     - Initialized the project creating the GitHub repository, deciding on the Flask & Django framework.
     - Created the original database `games.json` file which was moved to the `past_github_upload` directory, for backup purposes.
@@ -248,14 +282,14 @@ We used Django’s reverse and resolve functions to ensure that each URL is conn
     - Implemented the UI using CSS as well as made sure the game was relatively responsive and the UI components worked properly
     - Implemented the `test.py` file in order to validate things like creating a Sudoku Game or simulating HTTP requests.
     - Created most diagrams listed in the `diagrams` directory.
-  - Jonathan: 
+  - Jonathan:
     - Did most work primarily in the `index.html` file, `app.py`, `views.py`, files all located under the `frontend` & `backend` directories.
-    - Created and debugged notes functionality, including setting, clearing, and displaying notes. 
-    - Implemeted backend route /isCorrect to verify if a move is correct when it is made. 
-    - Began work for the timer. 
-    - Reworked the check solution and hint functions in the front and backend. 
-    - Added a route to the backend to clear history data for a cell. 
-    - Began work on the undo/undo untill correct, though I later pivoted away from that and it was reworked/added to by Mark. 
+    - Created and debugged notes functionality, including setting, clearing, and displaying notes.
+    - Implemeted backend route /isCorrect to verify if a move is correct when it is made.
+    - Began work for the timer.
+    - Reworked the check solution and hint functions in the front and backend.
+    - Added a route to the backend to clear history data for a cell.
+    - Began work on the undo/undo untill correct, though I later pivoted away from that and it was reworked/added to by Mark.
 
 ---
 
@@ -291,7 +325,7 @@ We used Django’s reverse and resolve functions to ensure that each URL is conn
 20. ~~Lose Game Page~~
 -->
 
-## Description of Implementations
+<!-- ## Description of Implementations -->
 <!--
 - Undo Until Correct Button (takes away all wrong number inputs until it reaches the cells with only correct number inputs and preset values)
 - Generate Random Hint Button (user clicks the button at anytime, and a empty cell is filled with a value from the solutions part of the JSON file)
@@ -307,4 +341,4 @@ We used Django’s reverse and resolve functions to ensure that each URL is conn
 - The HTML file is currently 700 lines long with the combination of HTML and JavaScript on the file, for better file structure, it would be better to create a separate JavaScript file containing the functionality and separate directory for the index and game pages when both pages are implemented
 -->
 
----
+<!-- --- -->
