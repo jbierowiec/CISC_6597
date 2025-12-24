@@ -40,7 +40,7 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
     pdf.add_page()
     pdf.set_font('times', '', 16)
 
-    num_columns = 2  # Number of columns
+    num_columns = 2  
     col_width = pdf.w / num_columns - 10
     row_height = 10
     rows_per_page = 23
@@ -50,13 +50,6 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
 
     # Layout problems in columns
     for idx, problem in enumerate(problems):
-        '''
-        x = (idx % num_columns) * col_width + 10
-        y = (idx // num_columns) * row_height + 40
-        pdf.set_xy(x, y)
-        pdf.cell(10, 10, f"{idx + 1}.", align='R', ln=0)
-        pdf.cell(col_width, row_height, problem, 0, 0, 'L')
-        '''
         local_idx = idx % (rows_per_page * num_columns)
         page_idx = idx // (rows_per_page * num_columns)
 
@@ -82,14 +75,6 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
         pdf.ln(15)
 
         for idx, solution in enumerate(solutions):
-            '''
-            x = (idx % num_columns) * col_width + 10
-            y = (idx // num_columns) * row_height + 40
-            pdf.ln(10)
-            pdf.set_xy(x, y)
-            pdf.cell(10, 10, f"{idx + 1}.", align='R', ln=0)
-            pdf.cell(col_width, row_height, str(solution), 0, 0, 'L')
-            '''
             local_idx = idx % (rows_per_page * num_columns)
             page_idx = idx // (rows_per_page * num_columns)
 
@@ -106,19 +91,9 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
             pdf.cell(col_width, row_height, str(solution), 0, 0, 'L')
 
     # Save the PDF
-    '''
-    output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
-    os.makedirs(output_dir, exist_ok=True)
-    pdf_path = os.path.join(output_dir, 'generated_pdfs/basic_addition.pdf')
-    #pdf.output(pdf_path)
-    pdf.output(output_path)
-    '''
-
-    # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'basic_addition.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
 
 

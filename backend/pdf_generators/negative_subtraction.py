@@ -41,7 +41,7 @@ def generate_negative_subtraction_worksheet(num_problems=10, include_answer_key=
     pdf.add_page()
     pdf.set_font('helvetica', '', 12)
 
-    num_columns = 2  # Number of columns
+    num_columns = 2 
     col_width = pdf.w / num_columns - 10
     row_height = 10
     rows_per_page = 23
@@ -96,7 +96,6 @@ def generate_negative_subtraction_worksheet(num_problems=10, include_answer_key=
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'negative_subtraction.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
     
 # To generate a PDF

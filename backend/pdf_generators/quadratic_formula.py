@@ -44,7 +44,7 @@ def generate_quadratic_question(num_problems):
     solutions = []
 
     for _ in range(num_problems):
-        if random.random() < 0.8:  # 80% chance of generating a solvable equation with integer roots
+        if random.random() < 0.8: 
             while True:
                 root1 = random.randint(-10, 10)
                 root2 = random.randint(-10, 10)
@@ -66,7 +66,7 @@ def generate_quadratic_question(num_problems):
 
             solutions.append(solution)
 
-        else:  # 20% chance of generating an equation with no real roots
+        else: 
             while True:
                 a = random.choice([-1, 1]) * random.randint(1, 5)
                 b = random.randint(-10, 10) * 2
@@ -96,14 +96,14 @@ def generate_quadratic_formula_worksheet(num_problems=10, include_answer_key=Fal
     left_x = 10
     right_x = 110
     y_start = 40
-    line_height = 20  # Increased line height for better spacing
+    line_height = 20 
     max_rows = 12
     questions_per_page = 24
 
     for i, problem in enumerate(problems):
         page_index = i // questions_per_page
         local_index = i % questions_per_page
-        column = local_index // max_rows  # 0 or 1
+        column = local_index // max_rows 
         row = local_index % max_rows
 
         if local_index == 0 and i != 0:
@@ -123,7 +123,6 @@ def generate_quadratic_formula_worksheet(num_problems=10, include_answer_key=Fal
             tmp_img_path = tmp_img.name
 
         pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
-        #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
         pdf.ln(15)
 
     if include_answer_key:
@@ -158,13 +157,11 @@ def generate_quadratic_formula_worksheet(num_problems=10, include_answer_key=Fal
                 tmp_img_path = tmp_img.name
             
             pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
-            #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
 
     # Save the PDF
     pdf_output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(pdf_output_dir, exist_ok=True)
     pdf_path = os.path.join(pdf_output_dir, 'quadratic_formula.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
     
 # To generate a PDF

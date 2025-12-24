@@ -27,14 +27,13 @@ def generate_random_problems(num_problems, min_value=1, max_value=20):
     solutions = []
 
     for _ in range(num_problems):
-        b = random.randint(min_value, max_value)  # Choose a non-zero divisor
-        quotient = random.randint(min_value, max_value)  # Choose a random quotient
-        a = b * quotient  # Calculate the dividend as a multiple of the divisor
+        b = random.randint(min_value, max_value)  
+        quotient = random.randint(min_value, max_value)  
+        a = b * quotient  
 
-        while b == 0:  # Ensure 'b' is not zero
+        while b == 0:  
             b = random.randint(min_value, max_value)
         problems.append(f"{a} ÷ {b} =")
-        # solutions.append(a / b)
         solutions.append(quotient)
     
     return problems, solutions
@@ -45,7 +44,7 @@ def generate_division_worksheet(num_problems=10, include_answer_key=False, outpu
     pdf.add_page()
     pdf.set_font('times', '', 16)
 
-    num_columns = 2  # Number of columns
+    num_columns = 2  
     col_width = pdf.w / num_columns - 10
     row_height = 10
     rows_per_page = 23
@@ -99,7 +98,6 @@ def generate_division_worksheet(num_problems=10, include_answer_key=False, outpu
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'basic_division.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
     
 # To generate a PDF

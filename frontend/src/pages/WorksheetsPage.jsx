@@ -21,7 +21,7 @@ export default function WorksheetsPage() {
 
   const subTopics = useMemo(
     () => ({
-      Mathematics: ["Algebra 1", "Calculus 1"],
+      Mathematics: ["Algebra 1", "Geometry", "Calculus 1"],
     }),
     []
   );
@@ -44,7 +44,12 @@ export default function WorksheetsPage() {
         "Distributive Property",
         "Quadratic Formula",
       ],
-      "Calculus 1": ["Definite Integrals", "Indefinite Integrals", "Derivatives"],
+      "Geometry": ["Basic Circles"],
+      "Calculus 1": [
+        "Definite Integrals",
+        "Indefinite Integrals",
+        "Derivatives",
+      ],
     }),
     []
   );

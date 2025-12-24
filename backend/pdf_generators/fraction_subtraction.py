@@ -66,9 +66,9 @@ def generate_fraction_subtraction_worksheet(num_problems=10, include_answer_key=
     left_x = 10
     right_x = 110
     y_start = 40
-    line_height = 20  # Increased line height for better spacing
+    line_height = 20  
     max_rows = 12
-    per_page = max_rows * 2  # 2 columns
+    per_page = max_rows * 2  
 
     for i, problem in enumerate(problems):
         if i % per_page == 0 and i != 0:
@@ -120,7 +120,6 @@ def generate_fraction_subtraction_worksheet(num_problems=10, include_answer_key=
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'fraction_subtraction.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
         
 # To generate a PDF

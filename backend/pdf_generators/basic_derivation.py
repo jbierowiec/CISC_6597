@@ -68,14 +68,14 @@ def generate_derivation_worksheet(num_problems=10, include_answer_key=False, out
     left_x = 10
     right_x = 110
     y_start = 40
-    line_height = 20  # Increased line height for better spacing
+    line_height = 20  
     max_rows = 11
     questions_per_page = 22
 
     for i, problem in enumerate(problems):
         page_index = i // questions_per_page
         local_index = i % questions_per_page
-        column = local_index // max_rows  # 0 or 1
+        column = local_index // max_rows  
         row = local_index % max_rows
 
         if local_index == 0 and i != 0:
@@ -90,8 +90,8 @@ def generate_derivation_worksheet(num_problems=10, include_answer_key=False, out
         pdf.cell(20, 10, f"{i + 1}.", align='L', ln=0)
 
         # Always place image a fixed distance right of the number
-        image_x = x + 20  # 20 units right of the number
-        image_y = y - 2   # align vertically centered
+        image_x = x + 20  
+        image_y = y - 2  
 
         # Save the image_stream to a temporary PNG file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
@@ -99,7 +99,6 @@ def generate_derivation_worksheet(num_problems=10, include_answer_key=False, out
             tmp_img_path = tmp_img.name
 
         pdf.image(tmp_img_path, x=image_x, y=image_y, w=80, h=20)
-        #pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
         pdf.ln(15)
 
     if include_answer_key:
@@ -129,8 +128,8 @@ def generate_derivation_worksheet(num_problems=10, include_answer_key=False, out
             pdf.cell(20, 10, f"{i + 1}.", align='L', ln=0)
 
             # Always place image a fixed distance right of the number
-            image_x = x + 20  # 20 units right of the number
-            image_y = y - 2   # align vertically centered
+            image_x = x + 20  
+            image_y = y - 2   
             
             # Save the image_stream to a temporary PNG file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img:
@@ -138,14 +137,12 @@ def generate_derivation_worksheet(num_problems=10, include_answer_key=False, out
                 tmp_img_path = tmp_img.name
             
             pdf.image(tmp_img_path, x=image_x, y=image_y, w=80, h=20)
-            #pdf.image(image_stream, x=image_x, y=image_y, w=80, h=20)
             pdf.ln(15)
 
     # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'basic_derivation.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
     
 # To generate a PDF

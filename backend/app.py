@@ -25,6 +25,8 @@ from pdf_generators.fraction_division import generate_fraction_division_workshee
 from pdf_generators.distributive_property import generate_distributive_property_worksheet
 from pdf_generators.quadratic_formula import generate_quadratic_formula_worksheet
 
+from pdf_generators.basic_circles import generate_basic_circles_worksheet
+
 from pdf_generators.basic_derivation import generate_derivation_worksheet
 from pdf_generators.definite_integration import generate_definite_integral_worksheet
 from pdf_generators.indefinite_integration import generate_indefinite_integral_worksheet
@@ -626,6 +628,35 @@ def generate_quadratic_formula():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/generate-basic-circles', methods=['POST'])
+def generate_basic_circles():
+    data = request.json
+    include_answer_key = data.get('includeAnswerKey', False)
+    num_problems = data.get("questionCount", 10)
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    filename = f"basic_circles_{timestamp}.pdf"
+    filepath = os.path.join(OUTPUT_DIR, filename)
+
+    try:
+        generate_basic_circles_worksheet(num_problems, include_answer_key=include_answer_key, output_path=filepath)
+        
+        log_worksheet_generation(
+            topic="Mathematics",
+            subtopic="Geometry",
+            subsubtopic="Basic Circles",
+            worksheet_type="Practice",
+            question_count=num_problems,
+            include_answer_key=include_answer_key
+        )
+        
+        return jsonify({
+            "message": f"Worksheet with {num_problems} questions generated successfully.",
+            "downloadUrl": f"/downloads/{filename}"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/generate-definite-integrals', methods=['POST'])
 def generate_definite_integrals():
     data = request.json
@@ -722,15 +753,18 @@ def download(worksheet_type):
         "negative_subtraction": "generated_pdfs/negative_subtraction.pdf",
         "negative_multiplication": "generated_pdfs/negative_multiplication.pdf",
         "negative_division": "generated_pdfs/negative_division.pdf",
-        "definite_integration": "generated_pdfs/definite_integration.pdf",
-        "indefinite_integration": "generated_pdfs/indefinite_integration.pdf",
-        "basic_derivation": "generated_pdfs/basic_derivation.pdf",
         "fraction_addition": "generated_pdfs/fraction_addition.pdf",
         "fraction_subtraction": "generated_pdfs/fraction_subtraction.pdf",
         "fraction_multiplication": "generated_pdfs/fraction_multiplication.pdf",
         "fraction_division": "generated_pdfs/fraction_division.pdf",
         "distributive_property": "generated_pdfs/distributive_property.pdf",
         "quadratic_formula": "generated_pdfs/quadratic_formula.pdf",
+        
+        "basic_circles": "generated_pdfs/basic_circles.pdf",
+        
+        "definite_integration": "generated_pdfs/definite_integration.pdf",
+        "indefinite_integration": "generated_pdfs/indefinite_integration.pdf",
+        "basic_derivation": "generated_pdfs/basic_derivation.pdf",
     }
 
     file_path = file_mapping.get(worksheet_type)

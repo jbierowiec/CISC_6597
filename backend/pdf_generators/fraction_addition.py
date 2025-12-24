@@ -66,9 +66,9 @@ def generate_fraction_addition_worksheet(num_problems=10, include_answer_key=Fal
     left_x = 10
     right_x = 110
     y_start = 40
-    line_height = 20  # Increased line height for better spacing
+    line_height = 20  
     max_rows = 12
-    per_page = max_rows * 2  # 2 columns
+    per_page = max_rows * 2  
 
     # --- Questions ---
     for i, problem in enumerate(problems):
@@ -119,7 +119,6 @@ def generate_fraction_addition_worksheet(num_problems=10, include_answer_key=Fal
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'fraction_addition.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
     
 # To generate a PDF

@@ -69,7 +69,7 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
     left_x = 10
     right_x = 110
     y_start = 40
-    line_height = 20  # Increased line height for better spacing
+    line_height = 20  
     max_rows = 12
     questions_per_page = 24
 
@@ -96,7 +96,6 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
             tmp_img_path = tmp_img.name
 
         pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=20)
-        #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
         pdf.ln(15)
 
     if include_answer_key:
@@ -131,13 +130,11 @@ def generate_distributive_property_worksheet(num_problems=10, include_answer_key
                 tmp_img_path = tmp_img.name
 
             pdf.image(tmp_img_path, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
-            #pdf.image(image_stream, x=pdf.get_x() - 70, y=pdf.get_y() - 10, w=80, h=30)
 
     # Save the PDF
     output_dir = os.path.join(os.path.dirname(__file__), '../generated_pdfs')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, 'distributive_property.pdf')
-    #pdf.output(pdf_path)
     pdf.output(output_path)
         
 # To generate a PDF
