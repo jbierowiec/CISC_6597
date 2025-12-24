@@ -45,7 +45,11 @@ ALLOWED_ORIGINS = [o.strip() for o in os.getenv(
 
 CORS(
     app,
-    resources={r"/api/*": {"origins": ALLOWED_ORIGINS}},
+    resources={
+        r"/api/*": {"origins": ALLOWED_ORIGINS},
+        r"/generate-*": {"origins": ALLOWED_ORIGINS},     
+        r"/download/*": {"origins": ALLOWED_ORIGINS},    
+    },
     methods=["POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
