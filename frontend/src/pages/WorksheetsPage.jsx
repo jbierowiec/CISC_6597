@@ -44,7 +44,7 @@ export default function WorksheetsPage() {
         "Distributive Property",
         "Quadratic Formula",
       ],
-      "Calculus 1": ["Integrals", "Derivatives"],
+      "Calculus 1": ["Definite Integrals", "Indefinite Integrals", "Derivatives"],
     }),
     []
   );
