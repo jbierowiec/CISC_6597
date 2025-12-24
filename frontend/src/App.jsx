@@ -17,28 +17,22 @@ function useSnapHashScroll() {
   const location = useLocation();
 
   useEffect(() => {
-    // only handle on landing page
     if (location.pathname !== "/") return;
 
     const hash = location.hash;
     if (!hash) return;
 
-    // Wait a tick for DOM to be ready
     window.setTimeout(() => {
-      const sections = Array.from(document.querySelectorAll(".snap-section"));
       const target = document.querySelector(hash);
+      if (!target) return;
 
-      if (!target || sections.length === 0) return;
+      const nav = document.querySelector("nav.navbar");
+      const navH = nav?.offsetHeight ?? 72;
 
-      // Find which snap-section contains the target id
-      const idx = sections.findIndex((s) => s === target);
-      if (idx >= 0) {
-        const y = idx * window.innerHeight;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      } else {
-        // Fallback: try normal scrollIntoView
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      const y =
+        target.getBoundingClientRect().top + window.pageYOffset - (navH + 8);
+
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     }, 80);
   }, [location.pathname, location.hash]);
 }
