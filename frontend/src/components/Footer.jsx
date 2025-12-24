@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container">
         <div className="row gy-4">
           <div className="col-12 col-md-6 col-lg-4">
-            <h5 className="fw-semibold">Worksheets.ai</h5>
+            <h5 className="fw-semibold">Worksheets AI</h5>
             <p className="text-secondary mb-0">
               A clean, fast, AI-powered worksheet generator for STEM practice
               and teaching.
@@ -51,7 +51,7 @@ const Footer = () => {
               </li>
               <li>
                 <span className="text-secondary">
-                  Email: support@worksheets.ai
+                  Email: jbierowiec@fordham.edu
                 </span>
               </li>
               <li>
@@ -65,7 +65,7 @@ const Footer = () => {
 
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
           <small className="text-secondary">
-            © {currentYear} Worksheets.ai. All rights reserved.
+            © {currentYear} Worksheets AI. All rights reserved.
           </small>
           <small className="text-secondary">
             Built for fast practice + clean PDFs.

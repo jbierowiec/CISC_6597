@@ -57,31 +57,53 @@ const HomePage = () => {
     });
   }, []);
 
-  // ✅ snap-hash scrolling
+  useEffect(() => {
+    if (!showNotification) return;
+
+    const timer = setTimeout(() => {
+      setShowNotification(false);
+    }, 2000); // 2 seconds
+
+    return () => clearTimeout(timer);
+  }, [showNotification]);
+
+  // snap-hash scrolling
   useSnapHashScroll();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
+
+    const payload = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value,
+    };
 
     try {
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbwyqr2Hks5-TOOrjy-fqTGflKLfHh8QTvi1PVPFbxcXVtBz7y5TxXL_AwCMaGU-Ibzp/exec",
-        { method: "POST", body: formData }
-      );
+      const API_BASE =
+        process.env.REACT_APP_API_BASE_URL || "http://localhost:5050";
+
+      const response = await fetch(`${API_BASE}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const result = await response.json();
-      if (result.result === "success") {
-        setConfirmation("✅ Message sent successfully!");
+
+      if (response.ok && result.ok) {
+        setConfirmation("Message sent successfully!");
         setShowNotification(true);
         form.reset();
       } else {
-        setConfirmation("⚠️ Something went wrong. Please try again.");
+        setConfirmation(
+          result.error || "Something went wrong. Please try again."
+        );
         setShowNotification(true);
       }
     } catch (err) {
-      setConfirmation("⚠️ Submission failed. Please check your connection.");
+      setConfirmation("Submission failed. Please check your connection.");
       setShowNotification(true);
       console.error(err);
     }
@@ -94,10 +116,6 @@ const HomePage = () => {
         <div className="container">
           <div className="row align-items-center g-4">
             <div className="col-12 col-lg-6" data-aos="fade-right">
-              <span className="badge text-bg-primary-subtle text-primary mb-3">
-                STEM Worksheets • PDF Export • Fast
-              </span>
-
               <h1 className="display-5 fw-bold mb-3">
                 Generate clean, printable worksheets in seconds.
               </h1>
@@ -172,6 +190,7 @@ const HomePage = () => {
       </Section>
 
       {/* PLANS */}
+      {/*
       <Section
         id="product-demo"
         title="Simple plans"
@@ -231,6 +250,7 @@ const HomePage = () => {
           </div>
         </div>
       </Section>
+      */}
 
       {/* CONTACT */}
       <Section
@@ -285,16 +305,14 @@ const HomePage = () => {
 
               {showNotification && (
                 <div
-                  className="alert alert-success mt-3 position-relative"
+                  className={`alert ${
+                    confirmation.includes("successfully")
+                      ? "alert-success"
+                      : "alert-danger"
+                  } mt-3`}
                   role="alert"
                 >
                   {confirmation}
-                  <button
-                    type="button"
-                    className="btn-close position-absolute end-0 top-0 m-3"
-                    aria-label="Close"
-                    onClick={() => setShowNotification(false)}
-                  />
                 </div>
               )}
             </div>

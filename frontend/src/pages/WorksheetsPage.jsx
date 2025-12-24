@@ -282,10 +282,6 @@ export default function WorksheetsPage() {
                         + Answer Key
                       </button>
                     </div>
-
-                    <div className="col-12 mt-3 text-secondary small">
-                      By using this demo, you agree to reasonable use limits.
-                    </div>
                   </div>
 
                   {loading && (

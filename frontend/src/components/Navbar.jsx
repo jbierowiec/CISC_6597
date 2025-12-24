@@ -5,7 +5,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
       <div className="container">
         <a className="navbar-brand fw-semibold" href="/#home">
-          Worksheets.ai
+          Worksheet AI
         </a>
 
         <button
@@ -27,11 +27,13 @@ const Navbar = () => {
                 About
               </a>
             </li>
+            {/*
             <li className="nav-item">
               <a className="nav-link" href="/#product-demo">
                 Plans
               </a>
             </li>
+            */}
             <li className="nav-item">
               <a className="nav-link" href="/#contact">
                 Contact
