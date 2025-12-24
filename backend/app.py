@@ -1,11 +1,11 @@
-from flask import Flask, send_from_directory, request, jsonify, session, send_file, json
-from flask_cors import CORS
 from fpdf import FPDF
-from datetime import datetime, timezone
+from flask_cors import CORS
+from markupsafe import escape  
 from dotenv import load_dotenv
+from datetime import datetime, timezone
+from flask import Flask, send_from_directory, request, jsonify, session, send_file, json
 import os
-
-load_dotenv()  
+import requests
 
 from pdf_generators.basic_addition import generate_addition_worksheet
 from pdf_generators.basic_subtraction import generate_subtraction_worksheet
@@ -31,12 +31,15 @@ from pdf_generators.basic_integration import generate_integral_worksheet
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, "generated_pdfs")
-#OUTPUT_DIR = os.path.join(os.getcwd(), "generated_pdfs") 
+ENV_PATH = os.path.join(BASE_DIR, ".env")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-fallback-secret")
-CORS(app, resources={r"/*": {"origins": "*"}})
+ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "http://localhost:3000")
+CORS(app, resources={r"/*": {"origins": [ALLOWED_ORIGIN]}})
 
 
 def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, question_count, include_answer_key):
@@ -68,6 +71,141 @@ def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, quest
 @app.route("/")
 def index():
     return "Backend Running"
+
+@app.route("/api/contact", methods=["POST", "OPTIONS"])
+def contact():
+    # Preflight
+    if request.method == "OPTIONS":
+        return ("", 204)
+
+    data = request.get_json(silent=True) or {}
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip()
+    message = (data.get("message") or "").strip()
+
+    if not name or not email or not message:
+        return jsonify({"ok": False, "error": "Name, email, and message are required."}), 400
+
+    resend_key = os.getenv("RESEND_API_KEY")
+    contact_to = os.getenv("CONTACT_TO")          
+    contact_from = os.getenv("CONTACT_FROM")     
+
+    if not resend_key or not contact_to or not contact_from:
+        return jsonify({"ok": False, "error": "Server missing email configuration."}), 500
+
+    reply_to = contact_to
+    if email.lower() == contact_to.lower():
+        reply_to = email
+
+    subject = f"Worksheet AI Contact: {name}"
+
+    safe_name = escape(name)
+    safe_email = escape(email)
+    safe_message = escape(message)
+
+    html = f"""
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           bgcolor="#f4f6f8" style="background:#f4f6f8;padding:24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0"
+                 bgcolor="#ffffff"
+                 style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+
+            <!-- Header -->
+            <tr>
+              <td bgcolor="#111827" style="background:#111827;padding:18px 22px;">
+                <div style="font-family:Arial,Helvetica,sans-serif;color:#ffffff;font-size:18px;font-weight:700;">
+                  Worksheet AI
+                </div>
+                <div style="font-family:Arial,Helvetica,sans-serif;color:#c7d2fe;font-size:12px;margin-top:6px;">
+                  New Contact Form Submission
+                </div>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:22px;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                       style="font-size:14px;">
+                  <tr>
+                    <td style="padding:6px 0;font-weight:700;width:80px;">Name</td>
+                    <td style="padding:6px 0;">{safe_name}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;font-weight:700;">Email</td>
+                    <td style="padding:6px 0;">
+                      <a href="mailto:{safe_email}"
+                         style="color:#2563eb;text-decoration:none;">
+                        {safe_email}
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <div style="height:16px;"></div>
+                <div style="border-top:1px solid #e5e7eb;"></div>
+                <div style="height:16px;"></div>
+
+                <div style="font-weight:700;margin-bottom:8px;">Message</div>
+                <div style="background:#f9fafb;border:1px solid #e5e7eb;
+                            border-radius:8px;padding:14px;
+                            line-height:1.5;white-space:pre-wrap;">
+                  {safe_message}
+                </div>
+
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td bgcolor="#f9fafb" style="background:#f9fafb;padding:14px 22px;text-align:center;">
+                <div style="font-family:Arial,Helvetica,sans-serif;color:#6b7280;font-size:12px;">
+                  Sent from the Worksheet AI contact form.
+                </div>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+    """
+    
+    payload = {
+        "from": contact_from,
+        "to": [contact_to],
+        "replyTo": reply_to,  
+        "subject": subject,
+        "html": html,
+    }
+
+    try:
+        r = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {resend_key}",
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=15,
+        )
+
+        if r.status_code >= 400:
+            return jsonify({
+                "ok": False,
+                "error": "Email failed to send.",
+                "status": r.status_code,
+                "details": r.text
+            }), 502
+
+        return jsonify({"ok": True, "message": "Message sent successfully!"})
+
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
 
 @app.route("/<path:path>")
 def static_files(path):

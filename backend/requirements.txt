@@ -3,6 +3,7 @@ Flask-Login==0.6.3
 Flask-Migrate==4.0.7
 Flask-SQLAlchemy==3.1.1
 fpdf2==2.8.2
+requests==2.32.5
 matplotlib==3.8.4
 sympy==1.12
 Flask==3.0.3
