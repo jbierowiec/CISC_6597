@@ -38,8 +38,17 @@ load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-fallback-secret")
-ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "http://localhost:3000")
-CORS(app, resources={r"/*": {"origins": [ALLOWED_ORIGIN]}})
+ALLOWED_ORIGINS = [o.strip() for o in os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000"
+).split(",") if o.strip()]
+
+CORS(
+    app,
+    resources={r"/api/*": {"origins": ALLOWED_ORIGINS}},
+    methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
 
 
 def log_worksheet_generation(topic, subtopic, subsubtopic, worksheet_type, question_count, include_answer_key):
