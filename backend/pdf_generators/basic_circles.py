@@ -214,5 +214,5 @@ def generate_basic_circles_worksheet(num_problems=10, include_answer_key=False, 
 
     pdf.output(output_path)
 
-# Example local run:
+# To generate a PDF
 #generate_basic_circles_worksheet(include_answer_key=True)

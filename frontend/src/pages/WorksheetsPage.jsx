@@ -46,6 +46,7 @@ export default function WorksheetsPage() {
       ],
       "Geometry": ["Basic Circles"],
       "Calculus 1": [
+        "Basic Limit Evaluation",
         "Definite Integrals",
         "Indefinite Integrals",
         "Derivatives",

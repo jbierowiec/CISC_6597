@@ -27,6 +27,7 @@ from pdf_generators.quadratic_formula import generate_quadratic_formula_workshee
 
 from pdf_generators.basic_circles import generate_basic_circles_worksheet
 
+from pdf_generators.basic_limit_evaluation import generate_basic_limit_evaluation_worksheet
 from pdf_generators.basic_derivation import generate_derivation_worksheet
 from pdf_generators.definite_integration import generate_definite_integral_worksheet
 from pdf_generators.indefinite_integration import generate_indefinite_integral_worksheet
@@ -246,7 +247,7 @@ def generate_addition():
 
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Basic Addition",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -274,7 +275,7 @@ def generate_subtraction():
 
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Basic Subtraction",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -302,7 +303,7 @@ def generate_multiplication():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Basic Multiplication",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -330,7 +331,7 @@ def generate_division():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Basic Division",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -359,7 +360,7 @@ def generate_negative_addition():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Negative Addition",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -387,7 +388,7 @@ def generate_negative_subtraction():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Negative Subtraction",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -415,7 +416,7 @@ def generate_negative_multiplication():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Negative Multiplication",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -443,7 +444,7 @@ def generate_negative_division():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Negative Division",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -472,7 +473,7 @@ def generate_fraction_addition():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Fraction Addition",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -500,7 +501,7 @@ def generate_fraction_subtraction():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Fraction Subtraction",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -528,7 +529,7 @@ def generate_fraction_multiplication():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Fraction Multiplication",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -556,7 +557,7 @@ def generate_fraction_division():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Fraction Division",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -585,7 +586,7 @@ def generate_distributive_property():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Distributive Property",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -613,7 +614,7 @@ def generate_quadratic_formula():
         
         log_worksheet_generation(
             topic="Mathematics",
-            subtopic="Arithmetic",
+            subtopic="Algebra I",
             subsubtopic="Quadratic Formula",
             worksheet_type="Practice",
             question_count=num_problems,
@@ -656,6 +657,34 @@ def generate_basic_circles():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/generate-basic-limit-evaluation', methods=['POST'])
+def generate_basic_limit_evaluation():
+    data = request.json
+    include_answer_key = data.get('includeAnswerKey', False)
+    num_problems = data.get("questionCount", 10)
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    filename = f"basic_limit_evaluation_{timestamp}.pdf"
+    filepath = os.path.join(OUTPUT_DIR, filename)
+
+    try:
+        generate_basic_limit_evaluation_worksheet(num_problems, include_answer_key=include_answer_key, output_path=filepath)
+        
+        log_worksheet_generation(
+            topic="Mathematics",
+            subtopic="Calculus I",
+            subsubtopic="Basic Limit Evaluation",
+            worksheet_type="Practice",
+            question_count=num_problems,
+            include_answer_key=include_answer_key
+        )
+        
+        return jsonify({
+            "message": f"Worksheet with {num_problems} questions generated successfully.",
+            "downloadUrl": f"/downloads/{filename}"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate-definite-integrals', methods=['POST'])
 def generate_definite_integrals():
@@ -762,6 +791,7 @@ def download(worksheet_type):
         
         "basic_circles": "generated_pdfs/basic_circles.pdf",
         
+        "basic_limit_evaluation": "generated_pdfs/basic_limit_evaluation.pdf",
         "definite_integration": "generated_pdfs/definite_integration.pdf",
         "indefinite_integration": "generated_pdfs/indefinite_integration.pdf",
         "basic_derivation": "generated_pdfs/basic_derivation.pdf",

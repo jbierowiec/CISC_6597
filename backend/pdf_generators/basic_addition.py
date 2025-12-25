@@ -96,6 +96,5 @@ def generate_addition_worksheet(num_problems=10, include_answer_key=False, outpu
     pdf_path = os.path.join(output_dir, 'basic_addition.pdf')
     pdf.output(output_path)
 
-
 # To generate a PDF
 #generate_addition_worksheet(include_answer_key=True)
